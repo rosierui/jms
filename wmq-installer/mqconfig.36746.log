@@ -1,0 +1,20 @@
+#cp /tmp/mqconfig.36746.log .
+mqconfig: V3.7 analyzing Ubuntu 14.04.3 LTS settings for WebSphere MQ V8.0
+
+System V Semaphores
+  semmsl     (sem:1)  1000 semaphores                    IBM>=32           PASS
+  semmns     (sem:2)  0 of 1024000 semaphores    (0%)    IBM>=4096         PASS
+  semopm     (sem:3)  500 operations                     IBM>=32           PASS
+  semmni     (sem:4)  0 of 8192 sets             (0%)    IBM>=128          PASS
+
+System V Shared Memory
+  shmmax              137438953472 bytes                 IBM>=268435456    PASS
+  shmmni              15 of 8192 sets            (0%)    IBM>=4096         PASS
+  shmall              18880 of 536870912 pages   (0%)    IBM>=2097152      PASS
+
+System Settings
+  file-max            6944 of 1048576 files      (0%)    IBM>=524288       PASS
+
+Current User Limits (root)
+  nofile       (-Hn)  4096 files                         IBM>=10240        FAIL
+  nofile       (-Sn)  1024 files                         IBM>=10240        FAIL
