@@ -1,0 +1,234 @@
+<a href="articles.html">&bull; Articles</a>
+<a href="computing_articles.html">&bull; Articles about computing</a>
+<a href="development_articles.html">&bull; Articles about software development</a>
+<a href="apache-integration.html">&bull; Apache integration software</a>
+
+<h1>Creating and running a Java JMS client for IBM Websphere MQ, 
+from the ground up</h1>
+
+Although Websphere MQ (W-MQ) is not part of the Apache project -- 
+it is a commercial
+offering from IBM -- users of Apache integration products do sometimes find 
+themselves faced with integrating with W-MQ. This article describes in
+low-level detail how to create and run a very simple, stand-alone Java 
+application that
+does that, using the IBM Java client runtime for W-MQ. This article
+uses only a text editor and command-line tools, so that the principles are
+made very clear. With these principles understood, it should be possible
+to adapt the technique described here to more complex setups.
+<p/>
+The example will post a message to a WebSphere MQ destination, and then
+read it back. 
+<p/>
+I assume that the reader is broadly familiar with the concepts of JMS messaging.
+It isn't necessary to know anything about W-MQ, so long as you can get
+the necessary connection parameters from the W-MQ administrator. The 
+example has been tested on Linux, but should be platform-independent.
+
+<h2>Obtaining the IBM Java client runtime</h2>
+
+If you are an IBM customer with a support contract, you can get
+a zipfile bundle containing just the JAR files needed for a JMS
+client, for any particular W-MQ release. 
+Although there is no specific link to these packages (so far as I know), 
+they can be
+found by going to IBM's 
+<a href="http://www-933.ibm.com/support/fixcentral/">"Fix Central"</a>
+site and entering "Java" in the text keywords field. A certain amount
+of browsing will likely be required.
+<p/>
+Otherwise, you can obtain the JAR files from an existing server 
+installation of W-MQ. If you are working with an existing W-MQ set-up,
+then the server's administrator ought to be able to provide
+these files (for the record, they are in the <code>java/lib/</code> 
+directory of the installation.) Otherwise you could download a  
+<a href="https://www.ibm.com/developerworks/community/blogs/messaging/entry/develop_on_websphere_mq_advanced_at_no_charge?lang=en">developer release of
+W-MQ 7.5 or 8.0</a> or a  
+<a href="http://www.ibm.com/developerworks/downloads/ws/wmq/">90-day
+trial version</a>. The Linux version is supplied as a bunch of RPM files;
+if you only need the Java client JARs, then you need only install or
+unpack <code>MQSeriesJava-XXXX.rpm</code>. 
+
+@notebox(The developer and trial releases of license terms, and you should verify that your intended use corresponds to those term. I am not in a position to offer legal guidance on whether unpacking a trial release to get the Java JARs is legitimate in your jurisdiction)
+
+Wherever you get the JARs from, the specific ones you need to run the
+simple example in this article are <code>jms.jar</code>, 
+<code>com.ibm.mq.jar</code>, and <code>com.ibm.mqjms.jar</code>. 
+
+<p/>
+IBM also provides OSGi-compliant versions of the Java client runtime,
+that can be installed in an OSGi container like Karaf or JBoss Fuse.
+My experience is that subtle variations between the different 
+releases of the W-client MQ runtime mean that not all versions
+work with all versions of Karaf or Fuse. There is reasonable backward
+compatibility, so most likely you should use the latest version your
+container will accept.
+
+@notebox(The W-MQ 8.0 client runtime supports JMS 2.0. This version should work with 7.x servers but, at the time of writing, many application servers and OSGi containers do not have proper support for JMS 2.0, and there could be compatibility problems. This will not affect the operation of a stand-alone Java program)
+
+<h2>What you need to know from the server</h2>
+
+If you did not set the server up yourself, you will need to approach the
+administrator for the following information.
+
+<ul>
+<li>Hostname and port number ("listener port" in IBM jargon)</li>
+<li>User credentials, if any. Until version 8.0, the default is
+for W-MQ not to authenticate JMS clients</li>
+<li>Queue manager name. A queue manager is loosely analogous to
+a message broker in JMS terminology. However, because the same 
+listener can service multiple queue managers, it is necessary for
+the client to identify the specific one</li>
+<li>Channel name. A channel is a kind of connection specification --
+it is not the same as port. A default installation of W-MQ will have
+a channel called SYSTEM.DEF.SVRCONN, but this will probably have been
+disabled in a production set-up.</li>
+<li>Does the server insist on SSL? If so, does it expect the client
+to provide a certificate? What "Cipher Spec" does the channel use?
+For more information, see the section on SSL setup below.</li>
+<li>The names of the relevant JMS destinations. Unlike Apache ActiveMQ,
+W-MQ does not by default auto-create destinations on demand.</li>
+</ul>
+
+<h2>Coding the client</h2>
+
+For the complete Java source, please download the source code bundle
+(see the Downloads section at the end of this article).
+The W-MQ JARs support ordinary JMS operations -- the only W-MQ-specific
+part of the application will be the configuration of the connection
+factory.
+
+<pre class="codeblock" lang="java">
+import com.ibm.msg.client.wmq.*;
+import com.ibm.mq.jms.*;
+import javax.jms.*;
+...
+MQQueueConnectionFactory qcf = new MQQueueConnectionFactory();
+
+// Host and port settings have their usual meanings
+qcf.setHostName ("192.168.1.51");
+qcf.setPort (1414);
+
+// Queue manager and channel -- the W-MQ administrator should
+//  supply these
+qcf.setQueueManager ("QMA");
+qcf.setChannel ("SYSTEM.DEF.SVRCONN");
+
+// Although there are many possible values of transport type,
+//  only 'client' and 'bindings' work in a Java client. Bindings
+//  is a kind of in-memory transport and only works when the client
+//  and the queue manager are on the same physical host. In most
+//  cases we need 'client'. 
+qcf.setTransportType (WMQConstants.WMQ_CM_CLIENT);
+
+QueueConnection qc = qcf.createQueueConnection ("mqm", "nopassword");
+qc.start();
+
+// --- Everything below this line is generic JMS code 
+</pre>
+
+<h2>Compiling and running the client</h2>
+
+The only issue of concern here is to specify the paths to the
+three IBM JARs on the class search path. At the command line
+you can just do this, assuming that the environment variable
+<code>WMQ_LIB</code> indicates the directory where these 
+JARs are installed:
+
+<pre class="codeblock">
+$ mkdir target
+$ javac -classpath $WMQ_LIB/jms.jar:$WMQ_LIB/com.ibm.mq.jar:$WMQ_LIB/com.ibm.mqjms.jar \
+  -d target \
+  src/net/kevinboone/apacheintegration/simplewmgclient/SimpleWMQClient.java 
+
+$ java -classpath $WMQ_LIB/jms.jar:$WMQ_LIB/com.ibm.mq.jar:$WMQ_LIB/com.ibm.mqjms.jar:target \
+  net.kevinboone.apacheintegration.simplewmqclient.SimpleWMQClient
+</pre>
+
+All being well, the application should post a message and receive it back,
+and produce output like this:
+
+<pre class="codeblock">
+Received message: 
+  JMSMessage class: jms_text
+  JMSType:          null
+  JMSDeliveryMode:  2
+  JMSExpiration:    0
+  JMSPriority:      4
+  JMSMessageID:     ID:414d5120514d412020202020202020202c499956022e0020
+  JMSTimestamp:     1452947118512
+  JMSCorrelationID: null
+  JMSDestination:   queue:///QUEUE1
+  JMSReplyTo:       null
+  JMSRedelivered:   false
+    JMSXAppID: SimpleWMQClient             
+    JMSXDeliveryCount: 0
+    JMSXUserID: mqm         
+    JMS_IBM_PutApplType: 28
+    JMS_IBM_PutDate: 20160116
+    JMS_IBM_PutTime: 12251852
+Hello, World!
+</pre>
+
+<h2>SSL setup</h2>
+
+SSL setup presents some complications, which this article can only touch
+on. In W-MQ, SSL is often used as part of a client authentication strategy
+as well as for transport security. In that case, the client will need
+to present a client certificate to the server, in addition to the server
+presenting its certificate to the client.
+<p/>
+It will also be necessary to determine the "Cipher Spec" used by the
+server, and configure the client to match. Some collaboration is normally
+required between the Java developer and the administrator here, because
+not all ciphers that W-MQ supports are supported by the JVM, and 
+<i>vice versa</i>. Additionally, and rather irritatingly, the cipher 
+names used
+in W-MQ and in Java do not match. A list of cipher correspondences 
+can be found in the IBM documentation
+<a href="http://www-01.ibm.com/support/knowledgecenter/SSFKSJ_7.1.0/com.ibm.mq.doc/ja34740_.htm">here.</a>
+<p/>
+The screenshot below shows the configuration of an SSL-enabled 
+channel in the W-MQ "Explorer" GUI tool. Note that this is
+one-way SSL (server must supply a certificate; client need not do so),
+<p/>
+<br clear="all"/>
+<img src="simplewmqclient01.png">
+<br clear="all"/>
+<p/>
+The Cipher Spec is "RC4_MD5_EXPORT", for which the equivalent
+Java cipher is "SSL_RSA_EXPORT_WITH_RC4_40_MD5". Since this is not a 
+FIPS-compliant cipher, we must add the following settings to the 
+connection factory configuration:
+
+<pre class="codeblock">
+qcf.setSSLCipherSuite ("SSL_RSA_EXPORT_WITH_RC4_40_MD5");  
+qcf.setSSLFipsRequired (false);
+</pre>
+
+The default certificate store format (on Unix and Linux, anyway) for
+W-MQ is the proprietary "CMS." W-MQ comes with a tool that will export
+the certificate store in Java JKS, or just extract individual
+server (public key) certificates. For the Java client to trust the 
+server, the server's public key must be imported into the JVM's trust
+store. The standard Java <code>keytool</code> utility will probably help
+here. The Java developer might need to supply the JVM's client certificate
+to the server administrator so that the server can authenticate the
+client; again, <code>keytool</clode> be able to extract the client's
+public key in a mutually-acceptable format. 
+
+<h2>Summary</h2>
+
+This article has explained how to create a simple Java client that
+does JMS messaging with Websphere MQ. The principles described here
+should extend to more complex set-ups, if necessary. If you are working
+on an application server, then the <a href="http://www-01.ibm.com/support/docview.wss?uid=swg21633761">Websphere MQ JCA resource adapater</a> probably
+provides a better method for getting a W-MQ connection factory that
+instantiating it directly, as described in this article.
+
+<h2>Downloads</h2>
+
+<a href="simplewmqclient.zip">Source code bundle</a>
+<p/>
+<p/>
+
