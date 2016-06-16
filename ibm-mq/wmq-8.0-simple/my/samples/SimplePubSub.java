@@ -1,4 +1,6 @@
-//wordpress.com/2007/05/29/simplest-sample-applications-using-websphere-mq-jms/
+package my.samples;
+
+//https://hursleyonwmq.wordpress.com/2007/05/29/simplest-sample-applications-using-websphere-mq-jms/
 
 //Simple Publish/Subscribe application using WebSphere MQ JMS
 

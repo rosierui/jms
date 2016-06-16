@@ -14,8 +14,7 @@ import com.ibm.mq.MQPutMessageOptions;
 import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
 
-public class MQConnector
-{
+public class MQConnector {
   protected String qManager = ""; // define name of queue manager
 
   protected String qManagerHost = "";
@@ -28,15 +27,11 @@ public class MQConnector
 
   public static boolean DEBUG = true;
 
-  public MQConnector()
-  {
-
+  public MQConnector() {
   }
 
-  public void initMq()
-  {
-    try
-    {
+  public void initMq() {
+    try  {
       FileInputStream fis = new FileInputStream(new File("mqconnect.properties"));
       Properties props = new Properties();
       props.load(fis);
@@ -52,14 +47,12 @@ public class MQConnector
       qMgr = new MQQueueManager(qManager);
 
     }
-    catch (Exception e)
-    {
+    catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public void openQueue() throws MQException
-  {
+  public void openQueue() throws MQException {
 
     // Set up the options on the queue we wish to open...
     // Note. All WebSphere MQ Options are prefixed with MQC in Java.
@@ -67,28 +60,23 @@ public class MQConnector
     // Now specify the queue that we wish to open,
     // and the open options...    
     debug("Opening queue: " + queuName);
-    try
-    {
+    try {
       mqQueue = qMgr.accessQueue(queuName, openOptions);
     }
-    catch(MQException mqe)
-    {
+    catch(MQException mqe) {
       //check if MQ reason code 2045
       //means that opened queu is remote and it can not be opened as 
       //input queue
       //try to open as output only
-      if(mqe.reasonCode==2045)
-      {
+      if(mqe.reasonCode==2045) {
         openOptions = MQC.MQOO_OUTPUT;
         mqQueue = qMgr.accessQueue(queuName, openOptions);
       }
     }
   }
-    
-  public void putMessageToQueue(String msg) throws MQException
-  {
-    try
-    {
+
+  public void putMessageToQueue(String msg) throws MQException {
+    try {
       debug("Sending message: " + msg);
 
       MQPutMessageOptions pmo = new MQPutMessageOptions(); 
@@ -98,50 +86,43 @@ public class MQConnector
       // put the message on the queue
       mqQueue.put(mqMsg, pmo);
     }
-    catch (IOException e)
-    {
+    catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  public String getMessageFromQueue() throws MQException 
-  {
-    try
-    {
+  public String getMessageFromQueue() throws MQException {
+    try {
       MQMessage mqMsg = new MQMessage();
-      
+
       MQGetMessageOptions gmo = new MQGetMessageOptions();
 
       // Get a message from the queue
-      mqQueue.get(mqMsg,gmo);  
-       
+      mqQueue.get(mqMsg,gmo);
+
       //Extract the message data
       int len=mqMsg.getDataLength();
       byte[] message = new byte[len];
       mqMsg.readFully(message,0,len);
       return new String(message);
     }
-    catch(MQException mqe)
-    {
+    catch(MQException mqe) {
       int reason=mqe.reasonCode;
-      
-      if(reason==2033)//no messages
-      {
+
+      if(reason==2033){ //no messages
         return null;
       }
       else
       {
         throw mqe;
       }
-    }    
-    catch (IOException e)
-    {
+    }
+    catch (IOException e) {
       e.printStackTrace();
       return null;
     }
   }
-  
-  
+
   public void closeQueue() throws MQException
   {
     debug("Closing queue...");
@@ -151,36 +132,26 @@ public class MQConnector
 
   }
 
-  public void disconnectMq() throws MQException
-  {
+  public void disconnectMq() throws MQException {
     debug("Disconnecting QueueManager...");
 
     // Disconnect from the queue manager
     qMgr.disconnect();
-
   }
 
   
-  protected boolean hasArg(String arg, String[] args)
-  {
-    for(int i=0;i<args.length;i++)
-    {
-      if(args[i].equals(arg))
-      {
+  protected boolean hasArg(String arg, String[] args) {
+    for(int i=0;i<args.length;i++) {
+      if(args[i].equals(arg)) {
         return true;
       }
     }
     return false;
   }
-  
-  public void debug(Object msg)
-  {
-    if (DEBUG)
-    {
+
+  public void debug(Object msg) {
+    if (DEBUG) {
       System.out.println(msg);
     }
   }
-
-  
-  
 }

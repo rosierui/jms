@@ -21,7 +21,7 @@ Create queue and channels
 Configure WebSphere MQ using command-line tools. A configuration script for WMQ1 is below. The script defines local queue, remote queue, transmission queue, sender channel, and receiver channel.Save the script as WMQ1QM.conf
 
 Configure WebSphere MQ using the command below to create queues and channels:
-mqm@wmq1:~/ # runmqsc WMQ1QM < WMQ1QM.conf > qcreate.log
+mqm@wmq1:~/ # runmqsc WMQ1QM < WMQ1QM.conf > /var/mqm/qcreate.log
 
 The command runmqsc is used to issue WebSphere MQ commands. In this case, commands are read from the WMQ1QM.conf file and output is directed to qcreate.log. Open qcreate.log and verify that there were no syntax errors and all valid commands were processed.
 
@@ -40,4 +40,3 @@ java  -cp "/g01/srv/mqm/java/lib/*:" mqconn/MQConnector
 
 java -cp .:com.ibm.mq.jar mqconn.MQSend "$@"
 java -cp .:com.ibm.mq.jar mqconn.MQGet "$@"
-
