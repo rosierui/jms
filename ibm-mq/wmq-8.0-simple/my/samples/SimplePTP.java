@@ -40,17 +40,17 @@ public class SimplePTP {
       cf.setHostName("localhost");
       cf.setPort(1414);
       cf.setTransportType(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP);
-      cf.setQueueManager("QM_thinkpad");
-      cf.setChannel("SYSTEM.DEF.SVRCONN");
+      cf.setQueueManager("WMQ1QM"); // QM1, QMA, WMQ1QM, WMQ2QM,
+      cf.setChannel("SYSTEM.DEF.SVRCONN"); // Sets the name of the channel - applies to client transport mode only
 
       MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
       MQQueue queue = (MQQueue) session.createQueue("queue:///Q1");
       MQQueueSender sender =  (MQQueueSender) session.createSender(queue);
-      MQQueueReceiver receiver = (MQQueueReceiver) session.createReceiver(queue);      
+      MQQueueReceiver receiver = (MQQueueReceiver) session.createReceiver(queue);
 
       long uniqueNumber = System.currentTimeMillis() % 1000;
-      JMSTextMessage message = (JMSTextMessage) session.createTextMessage("SimplePTP "+ uniqueNumber);     
+      JMSTextMessage message = (JMSTextMessage) session.createTextMessage("SimplePTP "+ uniqueNumber);
 
       // Start the connection
       connection.start();
