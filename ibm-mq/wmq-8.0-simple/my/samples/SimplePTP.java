@@ -28,9 +28,11 @@ import com.ibm.mq.jms.MQQueueSession;
  */
 public class SimplePTP {
   /**
-   * Main method
-   *
-   * @param args
+   * https://hursleyonwmq.wordpress.com/2007/02/07/what-tcp-ports-are-you-using-for-channel-listeners/
+   * 1414 - hanging
+   * 1420 - com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ0018: Failed to connect to queue manager 'QM1' with connection mode 'Client' and host name 'localhost(1420)'.
+   *        Check the queue manager is started and if running in client mode, check there is a listener running. Please see the linked exception for more information.
+   * 
    */
   public static void main(String[] args) {
     try {
@@ -38,14 +40,14 @@ public class SimplePTP {
 
       // Config
       cf.setHostName("localhost");
-      cf.setPort(1414);
-      cf.setTransportType(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP);
-      cf.setQueueManager("WMQ1QM"); // QM1, QMA, WMQ1QM, WMQ2QM,
-      cf.setChannel("SYSTEM.DEF.SVRCONN"); // Sets the name of the channel - applies to client transport mode only
+      cf.setPort(1420); // 1414, 1420
+      cf.setTransportType(JMSC.MQCNO_SHARED_BINDING); // JMSC.MQJMS_TP_CLIENT_MQ_TCPIP | MQCNO_STANDARD_BINDING | MQJMS_TP_BINDINGS_MQ
+      cf.setQueueManager("QM1"); // QM1, QMA, WMQ1QM, WMQ2QM
+      cf.setChannel("SYSTEM.DEF.SVRCONN"); // L1| ClientConn1 | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
 
       MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-      MQQueue queue = (MQQueue) session.createQueue("queue:///Q1");
+      MQQueue queue = (MQQueue) session.createQueue("queue:///Q1"); // Note three forward slashes are required (not two) to account for a default queue manager name
       MQQueueSender sender =  (MQQueueSender) session.createSender(queue);
       MQQueueReceiver receiver = (MQQueueReceiver) session.createReceiver(queue);
 

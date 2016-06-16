@@ -45,7 +45,7 @@ public class SimplePubSub {
       cf.setHostName("localhost");
       cf.setPort(1414);
       cf.setTransportType(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP);
-      cf.setQueueManager("QM_thinkpad");
+      cf.setQueueManager("WMQ1QM"); // QM1, QMA, WMQ1QM, WMQ2QM
       cf.setChannel("SYSTEM.DEF.SVRCONN");
 
       MQTopicConnection connection = (MQTopicConnection) cf.createTopicConnection();
