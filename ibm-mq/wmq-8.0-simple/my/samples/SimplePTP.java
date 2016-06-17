@@ -41,11 +41,12 @@ public class SimplePTP {
       // Config
       cf.setHostName("localhost");
       cf.setPort(1420); // 1414, 1420
-      cf.setTransportType(JMSC.MQCNO_SHARED_BINDING); // JMSC.MQJMS_TP_CLIENT_MQ_TCPIP | MQCNO_STANDARD_BINDING | MQJMS_TP_BINDINGS_MQ
+      cf.setTransportType(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP); // JMSC.MQJMS_TP_CLIENT_MQ_TCPIP | MQCNO_STANDARD_BINDING | MQJMS_TP_BINDINGS_MQ | JMSC.MQCNO_SHARED_BINDING
       cf.setQueueManager("QM1"); // QM1, QMA, WMQ1QM, WMQ2QM
       cf.setChannel("SYSTEM.DEF.SVRCONN"); // L1| ClientConn1 | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
 
-      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
+//      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
+      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection("moonwave", "");
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
       MQQueue queue = (MQQueue) session.createQueue("queue:///Q1"); // Note three forward slashes are required (not two) to account for a default queue manager name
       MQQueueSender sender =  (MQQueueSender) session.createSender(queue);

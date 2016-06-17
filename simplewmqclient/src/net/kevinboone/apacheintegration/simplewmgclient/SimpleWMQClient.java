@@ -13,7 +13,7 @@
  Distrubuted under the terms of the GNU Public Licence, version 3.0-- 
  You know the drill by now.
  */
-package net.kevinboone.apacheintegration.simplewmqclient;
+package net.kevinboone.apacheintegration.simplewmgclient;
 
 import com.ibm.msg.client.wmq.*;
 import com.ibm.mq.jms.*;
@@ -28,7 +28,7 @@ public class SimpleWMQClient
     MQQueueConnectionFactory qcf = new MQQueueConnectionFactory();
 
     // Host and port settings have their usual meanings
-    qcf.setHostName ("192.168.1.51");
+    qcf.setHostName ("192.168.0.4"); // 192.168.1.51
     qcf.setPort (1414);
 
     // Queue manager and channel -- the W-MQ administrator should
