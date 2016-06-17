@@ -20,7 +20,15 @@
 
 ##################################################
 # Check that the current shell is running as sudo root, and exit if not.
+# sudo ./mqinstaller.sh
 ##################################################
+    # added test code here
+    echo "EUID: $EUID, SUDO_USER: $SUDO_USER"
+    MY_SUDO="sudo -u $SUDO_USER"
+    # ==> EUID: 0, SUDO_USER: moonwave
+    echo "MY_SUDO: '$MY_SUDO'"
+    # ==> MY_SUDO: 'sudo -u moonwave'
+
 if [ $EUID != "0" -o -z "$SUDO_USER" ] ; then
 	echo "" >&2
 	echo "ERROR: This script must be run from non-root account with a sudo root command." >&2
@@ -36,6 +44,8 @@ if [ $SUDO_USER = "root" ] ; then
 	echo "" >&2
 	exit 1
 fi
+
+
 
 # Some useful tips about error checking in bash found here: http://www.davidpashley.com/articles/writing-robust-shell-scripts/
 # This prevents running the script if any of the variables have not been set
@@ -158,14 +168,15 @@ EOF
 
 #############################################
 # CreateQueueManager
-#
+#   CreateQueueManager $QM $PORT $QM_DATA_PATH $QM_LOG_PATH
+#   CreateQueueManager QM1 1420 /var/mqm/QM1_DATA /var/mqm/QM1_LOG
 # Parameters
-# 1 - Queue Manager name
-# 2 - Queue Manager listener port
-# 3 - Queue Manager data file path
-# 4 - Queue Manager log file path
+# 1 - Queue Manager name                QM1
+# 2 - Queue Manager listener port       1420
+# 3 - Queue Manager data file path      /var/mqm/${QM}_DATA ==> /var/mqm/QM1_DATA
+# 4 - Queue Manager log file path       /var/mqm/${QM}_LOG  ==> /var/mqm/QM1_LOG
 #############################################
-CreateQueueManager() {
+CreateQueueManager() {  # called by line 347
 	echo "------> This function creates queue manager $1 and all queues"
 	MY_SUDO="sudo -u $SUDO_USER"
 
@@ -332,6 +343,7 @@ AddMQMuser
 InstallWMQ
 
 # Define first instance of queue manager (repeat these lines if you need multiple QMs)
+# parameters are defined in setenv.sh
 CreateQueueManager $QM $PORT $QM_DATA_PATH $QM_LOG_PATH
 
 # Start WMQ Explorer to manage the installation
