@@ -28,12 +28,12 @@ public class SimpleWMQClient
     MQQueueConnectionFactory qcf = new MQQueueConnectionFactory();
 
     // Host and port settings have their usual meanings
-    qcf.setHostName ("192.168.0.4"); // 192.168.1.51
-    qcf.setPort (1414);
+    qcf.setHostName ("localhost"); // 192.168.1.51
+    qcf.setPort (1420); // 1414, 1420
 
     // Queue manager and channel -- the W-MQ administrator should
     //  supply these
-    qcf.setQueueManager ("QMA");
+    qcf.setQueueManager ("QM1");
     qcf.setChannel ("SYSTEM.DEF.SVRCONN");
 
     // Although there are many possible values of transport type,
@@ -48,7 +48,7 @@ public class SimpleWMQClient
     //   only auth check is that the user ID is an O/S user that is
     //   a member of the mqm group. 'mqm' itself is forbidden
     //   unless specifically allowed
-    QueueConnection qc = qcf.createQueueConnection ("mqm", "nopassword");
+    QueueConnection qc = qcf.createQueueConnection ("oracle", "nopassword");
     qc.start();
 
     // --- Everything below this line is generic JMS code ---

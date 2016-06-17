@@ -77,14 +77,14 @@ public class SimplePTP {
 
       // Set the properties
       cf.setStringProperty(WMQConstants.WMQ_HOST_NAME, "localhost");
-      cf.setIntProperty(WMQConstants.WMQ_PORT, 1414);
+      cf.setIntProperty(WMQConstants.WMQ_PORT, 1420); // 1414 | 1420; 1414 - hangs, 1420 - error
       cf.setStringProperty(WMQConstants.WMQ_CHANNEL, "SYSTEM.DEF.SVRCONN");
       cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
       cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, "QM1");
       cf.setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, "SimplePTP (JMS)");
 
       // Create JMS objects
-      connection = cf.createConnection();
+      connection = cf.createConnection("mqm", "");
       session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
       destination = session.createQueue("queue:///Q1");
       producer = session.createProducer(destination);
