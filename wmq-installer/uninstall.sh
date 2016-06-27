@@ -1,4 +1,9 @@
 #!/bin/bash
+. ./setenv.sh
+$WMQ_INSTALL_DIR/bin/setmqenv -s
+endmqm QM1
+endmqm QM2
+
 sudo rpm -ev MQSeriesJava
 sudo rpm -ev MQSeriesSamples
 sudo rpm -ev MQSeriesMan

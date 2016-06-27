@@ -294,8 +294,13 @@ InstallWMQ() {
 	./mqlicense.sh -accept
 
 	# Now we can install WMQ	
-	sudo rpm --prefix $WMQ_INSTALL_DIR -ivh MQSeriesRuntime-*.rpm MQSeriesServer-*.rpm MQSeriesClient-*.rpm MQSeriesSDK-*.rpm  MQSeriesMan-*.rpm MQSeriesSamples-*.rpm MQSeriesJRE-*.rpm MQSeriesExplorer-*.rpm MQSeriesJava-*.rpm
-			   
+#	sudo rpm --prefix $WMQ_INSTALL_DIR -ivh MQSeriesRuntime-*.rpm MQSeriesServer-*.rpm MQSeriesClient-*.rpm MQSeriesSDK-*.rpm  
+# MQSeriesMan-*.rpm MQSeriesSamples-*.rpm MQSeriesJRE-*.rpm MQSeriesExplorer-*.rpm MQSeriesJava-*.rpm
+#
+# http://www.ibm.com/support/knowledgecenter/SSFKSJ_8.0.0/com.ibm.mq.ins.doc/q008640_.htm
+#			   
+	sudo rpm --prefix $WMQ_INSTALL_DIR -ivh MQSeriesRuntime-*.rpm MQSeriesJRE-*.rpm MQSeriesJava-*.rpm MQSeriesServer-*.rpm MQSeriesClient-*.rpm  MQSeriesExplorer-*.rpm MQSeriesMan-*.rpm MQSeriesSDK-*.rpm  MQSeriesSamples-*.rpm   
+
 	# Define this as a primary installation
 	$WMQ_INSTALL_DIR/bin/setmqinst -i -p $WMQ_INSTALL_DIR
 
