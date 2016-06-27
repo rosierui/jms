@@ -1,6 +1,6 @@
 #!/bin/bash
 #The scripts can be used for install wmq 8.0 on Ubutu linux 14.04.3
-export WMQ_ARCHIVE=~/Downloads/software/mqadv_dev80_linux_x86-64.tar.gz
+export WMQ_ARCHIVE=~/Downloads/sys-srv/mqadv_dev80_linux_x86-64.tar.gz
 export CURR_DIR=`pwd`
 export UNZIPPED_PATH=${CURR_DIR}/wmq_install_unzipped/MQServer
 #export WMQ_INSTALL_DIR=/opt/mqm
