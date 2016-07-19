@@ -14,6 +14,10 @@ import com.ibm.mq.MQPutMessageOptions;
 import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
 
+/**
+ * MQI interface 
+ *
+ */
 public class MQConnector {
   protected String qManager = ""; // define name of queue manager
 
@@ -46,7 +50,7 @@ public class MQConnector {
 
       // Create a connection to the queue manager
 //      MQEnvironment.channel = "SYSTEM.DEF.SVRCONN"; //SYSTEM.DEF.SVRCONN
-      MQEnvironment.channel = "CHANNEL1"; //SYSTEM.DEF.SVRCONN
+      MQEnvironment.channel = "CHAN1"; //SYSTEM.DEF.SVRCONN
       MQEnvironment.hostname = qManagerHost;
       debug("Connecting to QueueManager " + qManager + " on " + qManagerHost);
       qMgr = new MQQueueManager(qManager);
