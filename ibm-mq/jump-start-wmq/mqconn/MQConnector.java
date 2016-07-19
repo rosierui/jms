@@ -45,7 +45,8 @@ public class MQConnector {
       queuName = props.getProperty("queue.name");
 
       // Create a connection to the queue manager
-      MQEnvironment.channel = "SYSTEM.DEF.SVRCONN";
+//      MQEnvironment.channel = "SYSTEM.DEF.SVRCONN"; //SYSTEM.DEF.SVRCONN
+      MQEnvironment.channel = "CHANNEL1"; //SYSTEM.DEF.SVRCONN
       MQEnvironment.hostname = qManagerHost;
       debug("Connecting to QueueManager " + qManager + " on " + qManagerHost);
       qMgr = new MQQueueManager(qManager);

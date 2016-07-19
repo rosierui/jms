@@ -40,6 +40,7 @@ public class SimplePTP {
       MQQueueConnectionFactory cf = new MQQueueConnectionFactory();
 
       // Config
+<<<<<<< HEAD
       cf.setHostName("10.0.2.15");//
       cf.setPort(1414); // 1414, 1420
 
@@ -54,6 +55,18 @@ public class SimplePTP {
 
 //      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
       MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection("oracle", "welcome1");
+=======
+      cf.setHostName("192.168.0.4");
+      cf.setPort(1414); // 1414, 1420
+      //cf.setTransportType(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP); // JMSC.MQJMS_TP_CLIENT_MQ_TCPIP | MQCNO_STANDARD_BINDING | MQJMS_TP_BINDINGS_MQ | JMSC.MQCNO_SHARED_BINDING
+      cf.setTransportType (WMQConstants.WMQ_CM_CLIENT); // WMQ_CM_CLIENT | WMQ_CM_DIRECT_TCPIP 
+      cf.setQueueManager("QMA"); // QM1, QMA, WMQ1QM, WMQ2QM
+      cf.setChannel("SYSTEM.DEF.SVRCONN"); // L1| ClientConn1 | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
+//    cf.setChannel("CHANNEL1"); // L1| ClientConn1 | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
+
+//      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
+      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection("mqm", "");
+>>>>>>> 5a0e540a7b840103d61a887d42a8be060d04da20
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
       MQQueue queue = (MQQueue) session.createQueue("queue:///Q1"); // Note three forward slashes are required (not two) to account for a default queue manager name
       MQQueueSender sender =  (MQQueueSender) session.createSender(queue);
