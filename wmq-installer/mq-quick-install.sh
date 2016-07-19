@@ -1,6 +1,7 @@
 #!/bin/bash
 #07/19/16
 #cd ${wmq_install_unzipped}/MQServer 
+./mqlicense.sh -accept
 export WMQ_INSTALL_DIR=/g01/srv/mqm
 sudo rpm --prefix $WMQ_INSTALL_DIR -ivh MQSeriesRuntime-*.rpm 
 sudo rpm --prefix $WMQ_INSTALL_DIR -ivh MQSeriesJRE-*.rpm 
