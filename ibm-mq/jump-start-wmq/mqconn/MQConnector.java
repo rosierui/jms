@@ -27,6 +27,10 @@ public class MQConnector {
 
   public static boolean DEBUG = true;
 
+  /**
+   * Setting up the WebSphere MQ environment for WebSphere MQ classes for Java
+   * https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.5.0/com.ibm.mq.dev.doc/q030790_.htm
+   */
   public MQConnector() {
   }
 
