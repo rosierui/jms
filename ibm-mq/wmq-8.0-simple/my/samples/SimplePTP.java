@@ -37,6 +37,19 @@ public class SimplePTP {
    *        Check the queue manager is started and if running in client mode, check there is a listener running. Please see the linked exception for more information.
    * Constants for WebSphere MQ JMS and WebSphere MQ Java Classes 
    *        http://www-01.ibm.com/support/docview.wss?uid=swg21423244
+   *
+   * WS Mq Using Java (v5 3)  3Rd Ed - 2004.pdf
+   *    sudo adduser mq_user
+   *    crtmqm  QMA
+   *    strmqm  QMA
+   *    runmqsc QMA
+   *    DEF CHL('JAVA.CHANNEL') CHLTYPE(SVRCONN) TRPTYPE(TCP) MCAUSER('') DESCR('Sample channel for WebSphere MQ classes for Java')
+   *    define qlocal(REQUEST_Q) maxdepth(5000)
+   *    define qlocal(REPLY_Q) maxdepth(5000)
+   *
+   *    setmqaut -m QMA -t qmgr -p mq_user +all
+   *    setmqaut -m QMA -t queue -n REQUEST_Q -p mq_user +all
+   * 
    */
 
   private static BufferedReader stdin = null;
