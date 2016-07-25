@@ -50,7 +50,7 @@ public class SimplePTP {
 
       cf.setTransportType (WMQConstants.WMQ_CM_CLIENT); // WMQ_CM_DIRECT_TCPIP 
       cf.setQueueManager("QMA");
-      cf.setChannel("SYSTEM.DEF.SVRCONN"); // JAVA.CHANNEL | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
+      cf.setChannel("JAVA.CHANNEL"); // JAVA.CHANNEL | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
 
       stdin = new BufferedReader(new InputStreamReader(System.in));
       System.out.print("Username: ");
