@@ -1,5 +1,8 @@
 package my.samples;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 //https://hursleyonwmq.wordpress.com/2007/05/29/simplest-sample-applications-using-websphere-mq-jms/
 
 //Simple Point-to-point application using WebSphere MQ JMS
@@ -9,7 +12,6 @@ import javax.jms.Session;
 
 import com.ibm.jms.JMSMessage;
 import com.ibm.jms.JMSTextMessage;
-import com.ibm.mq.jms.JMSC;
 import com.ibm.mq.jms.MQQueue;
 import com.ibm.mq.jms.MQQueueConnection;
 import com.ibm.mq.jms.MQQueueConnectionFactory;
@@ -33,27 +35,33 @@ public class SimplePTP {
    * 1414 - hanging
    * 1420 - com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ0018: Failed to connect to queue manager 'QM1' with connection mode 'Client' and host name 'localhost(1420)'.
    *        Check the queue manager is started and if running in client mode, check there is a listener running. Please see the linked exception for more information.
-   * 
+   * Constants for WebSphere MQ JMS and WebSphere MQ Java Classes 
+   *        http://www-01.ibm.com/support/docview.wss?uid=swg21423244
    */
+
+  private static BufferedReader stdin = null;
+  
   public static void main(String[] args) {
     try {
       MQQueueConnectionFactory cf = new MQQueueConnectionFactory();
 
-      // Config
       cf.setHostName("10.0.2.15");//
       cf.setPort(1414); // 1414, 1420
 
-      // Constants for WebSphere MQ JMS and WebSphere MQ Java Classes
-      //     http://www-01.ibm.com/support/docview.wss?uid=swg21423244
-      //cf.setTransportType(JMSC.MQJMS_TP_CLIENT_MQ_TCPIP); // JMSC.MQJMS_TP_CLIENT_MQ_TCPIP | MQCNO_STANDARD_BINDING | MQJMS_TP_BINDINGS_MQ | JMSC.MQCNO_SHARED_BINDING
-      cf.setTransportType (WMQConstants.WMQ_CM_CLIENT); // WMQ_CM_CLIENT | WMQ_CM_DIRECT_TCPIP 
+      cf.setTransportType (WMQConstants.WMQ_CM_CLIENT); // WMQ_CM_DIRECT_TCPIP 
       cf.setQueueManager("QMA");
-      cf.setChannel("CHAN1"); // ClientConn1 | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
+      cf.setChannel("SYSTEM.DEF.SVRCONN"); // JAVA.CHANNEL | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
 
-//      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
-      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection("oracle", "welcome1");
+      stdin = new BufferedReader(new InputStreamReader(System.in));
+      System.out.print("Username: ");
+      String username = stdin.readLine(); // mq_user
+
+      System.out.print("Password: ");
+      String password = stdin.readLine();
+
+      MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection(username, password); // cf.createQueueConnection()
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-      MQQueue queue = (MQQueue) session.createQueue("queue:///Q1"); // Note three forward slashes are required (not two) to account for a default queue manager name
+      MQQueue queue = (MQQueue) session.createQueue("queue:///REQUEST_Q"); // Note three forward slashes are required (not two) to account for a default queue manager name
       MQQueueSender sender =  (MQQueueSender) session.createSender(queue);
       MQQueueReceiver receiver = (MQQueueReceiver) session.createReceiver(queue);
 
