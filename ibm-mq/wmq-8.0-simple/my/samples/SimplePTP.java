@@ -38,39 +38,30 @@ public class SimplePTP {
    * Constants for WebSphere MQ JMS and WebSphere MQ Java Classes 
    *        http://www-01.ibm.com/support/docview.wss?uid=swg21423244
    *
-   * WS Mq Using Java (v5 3)  3Rd Ed - 2004.pdf
-   *    sudo adduser mq_user
-   *    crtmqm  QMA
-   *    strmqm  QMA
-   *    runmqsc QMA
-   *    DEF CHL('JAVA.CHANNEL') CHLTYPE(SVRCONN) TRPTYPE(TCP) MCAUSER('') DESCR('Sample channel for WebSphere MQ classes for Java')
-   *    define qlocal(REQUEST_Q) maxdepth(5000)
-   *    define qlocal(REPLY_Q) maxdepth(5000)
-   *
-   *    setmqaut -m QMA -t qmgr -p mq_user +all
-   *    setmqaut -m QMA -t queue -n REQUEST_Q -p mq_user +all
-   * 
+   * 1) sudo adduser mq_user (one time on Linux)
+   * 2) run moonwave/jms/wmq/scripts/create-qmgr.sh
+   * 3) change QueueManager and port to match in create-qmgr.sh
+   * 4) run this program
    */
 
   private static BufferedReader stdin = null;
   
   public static void main(String[] args) {
     try {
-      MQQueueConnectionFactory cf = new MQQueueConnectionFactory();
-
-      cf.setHostName("10.0.2.15");//
-      cf.setPort(1414); // 1414, 1420
-
-      cf.setTransportType (WMQConstants.WMQ_CM_CLIENT); // WMQ_CM_DIRECT_TCPIP 
-      cf.setQueueManager("QMA");
-      cf.setChannel("JAVA.CHANNEL"); // JAVA.CHANNEL | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
-
       stdin = new BufferedReader(new InputStreamReader(System.in));
       System.out.print("Username: ");
       String username = stdin.readLine(); // mq_user
 
       System.out.print("Password: ");
       String password = stdin.readLine();
+      MQQueueConnectionFactory cf = new MQQueueConnectionFactory();
+
+      cf.setHostName("192.168.0.13");
+      cf.setQueueManager("QMA");
+      cf.setPort(1414);
+
+      cf.setChannel("JAVA.CHANNEL"); // JAVA.CHANNEL | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
+      cf.setTransportType (WMQConstants.WMQ_CM_CLIENT); // WMQ_CM_DIRECT_TCPIP 
 
       MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection(username, password); // cf.createQueueConnection()
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -107,5 +98,3 @@ public class SimplePTP {
     }
   }
 }
-
-
