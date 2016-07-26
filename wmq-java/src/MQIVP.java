@@ -39,6 +39,26 @@ import com.ibm.mq.constants.MQConstants;
  * @author IBM Corporation
  * 
  */
+/**
+     1) sudo adduser mq_user (one time on Linux)
+     2) run moonwave/jms/wmq/scripts/create-qmgr.sh
+     3) run this program
+        Please enter the IP address of the MQ server                  :192.168.0.13
+        Please enter the port to connect to                           : (1414)1415
+        Please enter the server connection channel name               :JAVA.CHANNEL
+        Please enter the user name (or RETURN for none)               :mq_user
+        Please enter the password for the user                        :***
+        Please enter the queue manager name                           :QM1
+        Success: Connected to queue manager.
+        Success: Opened SYSTEM.DEFAULT.LOCAL.QUEUE
+        Success: Put a message to SYSTEM.DEFAULT.LOCAL.QUEUE
+        Success: Got a message from SYSTEM.DEFAULT.LOCAL.QUEUE
+        Success: Closed SYSTEM.DEFAULT.LOCAL.QUEUE
+        Success: Disconnected from queue manager
+
+        Tests complete - 
+        SUCCESS: This MQ Transport is functioning correctly.
+ */
 public class MQIVP {
 
   static final String sccsid = "@(#) MQMBID sn=p800-004-151022.DE su=_8QwZKXivEeWg74sVC8pxOw pn=MQJavaSamples/wmqjava/MQIVP.java";
