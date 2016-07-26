@@ -29,6 +29,8 @@ import com.ibm.msg.client.wmq.WMQConstants;
  *
  * @author saket
  */
+
+
 public class SimplePTP {
   /**
    * https://hursleyonwmq.wordpress.com/2007/02/07/what-tcp-ports-are-you-using-for-channel-listeners/
@@ -45,6 +47,11 @@ public class SimplePTP {
    */
 
   private static BufferedReader stdin = null;
+  static String host = "10.0.2.15";
+  static int port = 1415;
+  static String qmgr = "QM1";
+  static String defaultChannnel = "JAVA.CHANNEL"; //"SYSTEM.DEF.SVRCONN";
+  static String queueDef = "REQUEST_Q";
   
   public static void main(String[] args) {
     try {
@@ -56,16 +63,15 @@ public class SimplePTP {
       String password = stdin.readLine();
       MQQueueConnectionFactory cf = new MQQueueConnectionFactory();
 
-      cf.setHostName("192.168.0.13");
-      cf.setQueueManager("QMA");
-      cf.setPort(1414);
-
-      cf.setChannel("JAVA.CHANNEL"); // JAVA.CHANNEL | SYSTEM.DEF.SVRCONN - Sets the name of the channel - applies to client transport mode only
+      cf.setHostName(host);
+      cf.setPort(port);
+      cf.setQueueManager(qmgr);
+      cf.setChannel(defaultChannnel);
       cf.setTransportType (WMQConstants.WMQ_CM_CLIENT); // WMQ_CM_DIRECT_TCPIP 
 
       MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection(username, password); // cf.createQueueConnection()
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-      MQQueue queue = (MQQueue) session.createQueue("queue:///REQUEST_Q"); // Note three forward slashes are required (not two) to account for a default queue manager name
+      MQQueue queue = (MQQueue) session.createQueue("queue:///" + queueDef); // Note three forward slashes are required (not two) to account for a default queue manager name
       MQQueueSender sender =  (MQQueueSender) session.createSender(queue);
       MQQueueReceiver receiver = (MQQueueReceiver) session.createReceiver(queue);
 
