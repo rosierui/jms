@@ -28,40 +28,61 @@ import com.ibm.msg.client.wmq.WMQConstants;
  * @author saket
  */
 
-/**
- * Copied form wmq-8.0-simple-jms project
- * my.samples.SimplePTP.java
- *
- */
+
 public class SimplePTP {
   /**
-   * https://hursleyonwmq.wordpress.com/2007/02/07/what-tcp-ports-are-you-using-for-channel-listeners/
-   * 1414 - hanging
-   * 1420 - com.ibm.msg.client.jms.DetailedJMSException: JMSWMQ0018: Failed to connect to queue manager 'QM1' with connection mode 'Client' and host name 'localhost(1420)'.
-   *        Check the queue manager is started and if running in client mode, check there is a listener running. Please see the linked exception for more information.
-   * Constants for WebSphere MQ JMS and WebSphere MQ Java Classes 
-   *        http://www-01.ibm.com/support/docview.wss?uid=swg21423244
-   *
    * 1) sudo adduser mq_user (one time on Linux)
    * 2) run moonwave/jms/wmq/scripts/create-qmgr.sh
-   * 3) change QueueManager and port to match in create-qmgr.sh
-   * 4) run this program
+   * 3) run this program
    */
 
   private static BufferedReader stdin = null;
-  static String host = "10.0.2.15";
-  static int port = 1415;
-  static String qmgr = "QM1";
+  static String defaultUser     = "mq_user";
+  static String defaultHost     = "192.168.0.13"; // 10.0.2.15
+  static int    defaultPort     = 1415; // 30002
+  static String defaultQmgr     = "QM1";
   static String defaultChannnel = "JAVA.CHANNEL"; //"SYSTEM.DEF.SVRCONN";
-  
+  static String defaultQueue    = "REQUEST_Q";
+
   public static void main(String[] args) {
     try {
       stdin = new BufferedReader(new InputStreamReader(System.in));
-      System.out.print("Username: ");
-      String username = stdin.readLine(); // mq_user
+      System.out.print("Username [" + defaultUser + "]: ");
+      String username = stdin.readLine();
+      if (username.trim().length() == 0) {
+          username = defaultUser;
+      }
 
       System.out.print("Password: ");
       String password = stdin.readLine();
+
+      System.out.print("Host [" + defaultHost + "]: ");
+      String host = stdin.readLine();
+      if (host.trim().length() == 0) {
+          host = defaultHost;
+      }
+
+      System.out.print("Port [" + defaultPort + "]: ");
+      String portIn = stdin.readLine();
+      int port  = 0;
+      if (portIn.trim().length() == 0) {
+          port = defaultPort;
+      } else {
+          port = Integer.valueOf(portIn);
+      }
+
+      System.out.print("QueueManager [" + defaultQmgr + "]: ");
+      String qmgr = stdin.readLine();
+      if (qmgr.trim().length() == 0) {
+          qmgr = defaultQmgr;
+      }
+
+      System.out.print("Queue [" + defaultQueue + "]: ");
+      String queueName = stdin.readLine();
+      if (queueName.trim().length() == 0) {
+    	  queueName = defaultQueue;
+      }
+
       MQQueueConnectionFactory cf = new MQQueueConnectionFactory();
 
       cf.setHostName(host);
@@ -72,7 +93,8 @@ public class SimplePTP {
 
       MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection(username, password); // cf.createQueueConnection()
       MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-      MQQueue queue = (MQQueue) session.createQueue("queue:///REQUEST_Q"); // Note three forward slashes are required (not two) to account for a default queue manager name
+      //MQQueue queue = (MQQueue) session.createQueue("queue:///" + queueDef); // Note three forward slashes are required (not two) to account for a default queue manager name
+      MQQueue queue = (MQQueue) session.createQueue(queueName); // this works
       MQQueueSender sender =  (MQQueueSender) session.createSender(queue);
       MQQueueReceiver receiver = (MQQueueReceiver) session.createReceiver(queue);
 
