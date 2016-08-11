@@ -27,7 +27,7 @@ import com.ibm.msg.client.wmq.WMQConstants;
  *
  * Does not make use of JNDI for ConnectionFactory and/or Destination definitions.
  *
- * @author saket
+ * Modeled from SimpleWMQJMSPTP.java
  */
 
 
