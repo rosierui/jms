@@ -1,5 +1,4 @@
-package my.samples;
-
+package wmqjava;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -9,6 +8,7 @@ import java.io.InputStreamReader;
 
 import javax.jms.JMSException;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import com.ibm.jms.JMSMessage;
 import com.ibm.jms.JMSTextMessage;
@@ -27,13 +27,14 @@ import com.ibm.msg.client.wmq.WMQConstants;
  *
  * Does not make use of JNDI for ConnectionFactory and/or Destination definitions.
  *
- * Modeled from SimpleWMQJMSPTP.java
+ * @author saket
  */
 
 
 public class SimplePTP {
   /**
    * 1) sudo adduser mq_user (one time on Linux)
+   *        keep the password for the user
    * 2) run moonwave/jms/wmq/scripts/create-qmgr.sh
    * 3) run this program
    */
@@ -107,25 +108,34 @@ public class SimplePTP {
       connection.start();
 
       sender.send(message);
-      System.out.println("Sent message:\\n" + message);
+      System.out.println("Sent message:" + message);
 
       JMSMessage receivedMessage = (JMSMessage) receiver.receive(10000);
-      System.out.println("\\nReceived message:\\n" + receivedMessage);
+      System.out.println("\nReceived message:" + receivedMessage);
+
+      if (receivedMessage instanceof TextMessage) {
+          TextMessage txtMessage = (TextMessage) receivedMessage;
+          String returnText = txtMessage.getText();
+          System.out.println("\nreturnText: '" + returnText + "'");
+          System.out.println("returnText.length(): " + returnText.length());
+      } else {
+          // Handle error
+      }
 
       sender.close();
       receiver.close();
       session.close();
       connection.close();
 
-      System.out.println("\\nSUCCESS\\n");
+      System.out.println("\nSUCCESS\n");
     }
     catch (JMSException jmsex) {
       System.out.println(jmsex);
-      System.out.println("\\nFAILURE\\n");
+      System.out.println("\nFAILURE\n");
     }
     catch (Exception ex) {
       System.out.println(ex);
-      System.out.println("\\nFAILURE\\n");
+      System.out.println("\nFAILURE\n");
     }
   }
 }

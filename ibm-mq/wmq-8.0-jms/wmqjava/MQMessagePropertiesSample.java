@@ -1,3 +1,4 @@
+package wmqjava;
 /*
  *   <copyright 
  *   notice="lm-source-program" 
