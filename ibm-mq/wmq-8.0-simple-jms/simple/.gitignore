@@ -1,0 +1,14 @@
+/SimpleAsyncPutPTP.class
+/SimpleDurableSub.class
+/SimpleJNDILookup.class
+/SimpleMQMDRead.class
+/SimpleMQMDWrite.class
+/SimplePTP.class
+/SimplePubSub.class
+/SimpleReadAheadPTP.class
+/SimpleRequestor.class
+/SimpleResponder$SimpleMessageListener.class
+/SimpleResponder.class
+/SimpleRetainedPub.class
+/SimpleWMQJMSPTP.class
+/SimpleWMQJMSPubSub.class
