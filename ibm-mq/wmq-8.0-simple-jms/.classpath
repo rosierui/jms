@@ -19,5 +19,8 @@
 	<classpathentry kind="lib" path="/j01/lib/wmq-8.0.0.4/fscontext.jar"/>
 	<classpathentry kind="lib" path="/j01/lib/wmq-8.0.0.4/jms.jar"/>
 	<classpathentry kind="lib" path="/j01/lib/wmq-8.0.0.4/providerutil.jar"/>
+	<classpathentry kind="lib" path="/j01/lib/jdbc/db2/com.ibm.disthub2.dhbcore-7.0.1.4.jar"/>
+	<classpathentry kind="lib" path="/j01/lib/jdbc/db2/db2jcc4.jar"/>
+	<classpathentry kind="lib" path="/j01/lib/jdbc/db2/db2jcc-9.5.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>
